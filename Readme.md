@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url] [![Dependency status][dependency-image]][dependency-url]
 
 * Студент: [Филипп Шамсиев](https://up.htmlacademy.ru/javascript/4/user/70260).
-* Наставник: `Неизвестно`.
+* Наставник: `Без наставника`.
 
 ---
 
