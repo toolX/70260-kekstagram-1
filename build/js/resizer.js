@@ -112,6 +112,39 @@
       // Координаты задаются от центра холста.
       this._ctx.drawImage(this._image, displX, displY);
 
+      // Установка начальной точки системы координат в левый верхний угол холста.
+      this._ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+      // Отрисовка прозрачного слоя поверх изображения.
+      this._ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+      this._ctx.fillRect(0, 0, this._container.width, this._container.height);
+
+      // Отрисовка темного прозрачного фона поверх прозрачного фона.
+      this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      this._ctx.beginPath();
+      this._ctx.moveTo(0, 0);
+      this._ctx.lineTo(this._container.width, 0);
+      this._ctx.lineTo(this._container.width, this._container.height);
+      this._ctx.lineTo(0, this._container.height);
+      this._ctx.closePath();
+
+      // Установка начальной точки системы координат в центр холста.
+      this._ctx.translate(this._container.width / 2, this._container.height / 2);
+
+      // Объявление переменных для упрощения понимания кода и его чтения.
+      var innerRectX = (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2;
+      var innerRectY = (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2;
+      var innerRectWidth = this._resizeConstraint.side - this._ctx.lineWidth / 2;
+      var innerRectHeight = this._resizeConstraint.side - this._ctx.lineWidth / 2;
+
+      // Отрисовка внутреннего прямоугольника с прозрачным фоном.
+      this._ctx.moveTo(innerRectX, innerRectY);
+      this._ctx.lineTo(innerRectX + innerRectWidth, innerRectY);
+      this._ctx.lineTo(innerRectX + innerRectWidth, innerRectY + innerRectHeight);
+      this._ctx.lineTo(innerRectX, innerRectY + innerRectHeight);
+      this._ctx.closePath();
+      this._ctx.fill('evenodd');
+
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
       this._ctx.strokeRect(
@@ -120,31 +153,14 @@
           this._resizeConstraint.side - this._ctx.lineWidth / 2,
           this._resizeConstraint.side - this._ctx.lineWidth / 2);
 
+      // Установка начальной точки системы координат в левый верхний угол холста.
       this._ctx.setTransform(1, 0, 0, 1, 0, 0);
-      this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-      this._ctx.fillRect(
-        0,
-        0,
-        ((this._container.width - (this._resizeConstraint.side - this._ctx.lineWidth / 2)) / 2) - 7.65,
-        this._container.height);
-      this._ctx.fillRect(
-        this._container.width - (this._container.width - (this._resizeConstraint.side - this._ctx.lineWidth / 2)) / 2,
-        0,
-        ((this._container.width - (this._resizeConstraint.side - this._ctx.lineWidth / 2)) / 2),
-        this._container.height);
-      this._ctx.fillRect(
-        ((this._container.width - (this._resizeConstraint.side - this._ctx.lineWidth / 2)) / 2) - 8,
-        0,
-        (this._resizeConstraint.side - this._ctx.lineWidth / 2) + 8.3,
-        ((this._container.height - (this._resizeConstraint.side - this._ctx.lineWidth / 2)) / 2) - 8);
-      this._ctx.fillRect(
-        ((this._container.width - (this._resizeConstraint.side - this._ctx.lineWidth / 2)) / 2) - 8,
-        this._container.height - (this._container.height - (this._resizeConstraint.side - this._ctx.lineWidth / 2)) / 2,
-        (this._resizeConstraint.side - this._ctx.lineWidth / 2) + 8.3,
-        ((this._container.height - (this._resizeConstraint.side - this._ctx.lineWidth / 2)) / 2));
+
+      // Вывод размеров кадрированного изображения.
       this._ctx.font = '16px serif';
-      this._ctx.fillStyle = 'white';
+      this._ctx.fillStyle = '#fff';
       this._ctx.fillText(this._image.naturalWidth + ' x ' + this._image.naturalHeight, ((this._container.width / 2) - 30), 25);
+
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
       // следующий кадр рисовался с привычной системой координат, где точка
