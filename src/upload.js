@@ -72,6 +72,21 @@
    * @return {boolean}
    */
   function resizeFormIsValid() {
+    var resizeX = +resizeForm.x.value;
+    var resizeY = +resizeForm.y.value;
+    var size = +resizeForm.size.value;
+    resizeForm.x.min = 0;
+    resizeForm.y.min = 0;
+    resizeForm.size.max = currentResizer._image.naturalWidth || currentResizer._image.naturalHeight;
+    if ((resizeX + size) > currentResizer._image.naturalWidth) {
+      return false;
+    } else if ((resizeY + size) > currentResizer._image.naturalHeight) {
+      return false;
+    } else if (resizeX < 0) {
+      return false;
+    } else if (resizeY < 0) {
+      return false;
+    }
     return true;
   }
 
@@ -199,6 +214,9 @@
 
       resizeForm.classList.add('invisible');
       filterForm.classList.remove('invisible');
+      resizeForm.fwd.classList.remove('disabled');
+    } else {
+      resizeForm.fwd.classList.add('disabled');
     }
   };
 
