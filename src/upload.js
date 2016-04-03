@@ -83,8 +83,16 @@
     resizeForm.y.min = 0;
     resizeForm.size.min = 20;
     if (resizeX.validity.valid && resizeY.validity.valid && size.validity.valid) {
-      submit.disabled = false;
-      submit.classList.remove('disabled');
+      if ((+resizeX.value + size.value) > currentResizer._image.naturalWidth) {
+        submit.disabled = true;
+        submit.classList.add('disabled');
+      } if ((+resizeY.value + size.value) > currentResizer._image.naturalHeight) {
+        submit.disabled = true;
+        submit.classList.add('disabled');
+      } else {
+        submit.disabled = false;
+        submit.classList.remove('disabled');
+      }
     } else {
       submit.disabled = true;
       submit.classList.add('disabled');
@@ -114,7 +122,6 @@
   //};
   resizeForm.y.oninput = resizeFormIsValid;
   resizeForm.size.oninput = resizeFormIsValid;
-  resizeFormIsValid();
 
   /**
    * Форма добавления фильтра.
@@ -189,6 +196,7 @@
           resizeForm.classList.remove('invisible');
 
           hideMessage();
+          resizeFormIsValid();
         };
 
         fileReader.readAsDataURL(element.files[0]);
