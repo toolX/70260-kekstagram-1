@@ -72,7 +72,31 @@
    * @return {boolean}
    */
   function resizeFormIsValid() {
-    return true;
+    var resizeX = resizeForm.x;
+    var resizeY = resizeForm.y;
+    var size = resizeForm.size;
+    var submit = resizeForm.fwd;
+    resizeForm.x.required = true;
+    resizeForm.y.required = true;
+    resizeForm.size.required = true;
+    resizeForm.x.min = 0;
+    resizeForm.y.min = 0;
+    resizeForm.size.min = 20;
+    if (resizeX.validity.valid && resizeY.validity.valid && size.validity.valid) {
+      if ((+resizeX.value + size.value) > currentResizer._image.naturalWidth) {
+        submit.disabled = true;
+        submit.classList.add('disabled');
+      } if ((+resizeY.value + size.value) > currentResizer._image.naturalHeight) {
+        submit.disabled = true;
+        submit.classList.add('disabled');
+      } else {
+        submit.disabled = false;
+        submit.classList.remove('disabled');
+      }
+    } else {
+      submit.disabled = true;
+      submit.classList.add('disabled');
+    }
   }
 
   /**
@@ -86,6 +110,18 @@
    * @type {HTMLFormElement}
    */
   var resizeForm = document.forms['upload-resize'];
+
+  resizeForm.x.oninput = resizeFormIsValid;
+  //resizeForm.x.oninvalid = function() {
+  //  var div = document.createElement('div');
+  //  div.className = 'alert';
+  //  div.innerHTML = resizeForm.x.validity.toString;
+
+  //  document.body.insertBefore(div, document.body.firstChild);
+  //  console.log(123);
+  //};
+  resizeForm.y.oninput = resizeFormIsValid;
+  resizeForm.size.oninput = resizeFormIsValid;
 
   /**
    * Форма добавления фильтра.
@@ -160,6 +196,7 @@
           resizeForm.classList.remove('invisible');
 
           hideMessage();
+          resizeFormIsValid();
         };
 
         fileReader.readAsDataURL(element.files[0]);
@@ -194,12 +231,11 @@
   resizeForm.onsubmit = function(evt) {
     evt.preventDefault();
 
-    if (resizeFormIsValid()) {
-      filterImage.src = currentResizer.exportImage().src;
+    filterImage.src = currentResizer.exportImage().src;
 
-      resizeForm.classList.add('invisible');
-      filterForm.classList.remove('invisible');
-    }
+    resizeForm.classList.add('invisible');
+    filterForm.classList.remove('invisible');
+    resizeForm.fwd.classList.remove('disabled');
   };
 
   /**
