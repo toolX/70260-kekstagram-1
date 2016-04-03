@@ -85,11 +85,9 @@
     if (resizeX.validity.valid && resizeY.validity.valid && size.validity.valid) {
       submit.disabled = false;
       submit.classList.remove('disabled');
-      console.log('ok');
     } else {
       submit.disabled = true;
       submit.classList.add('disabled');
-      console.log('error');
     }
   }
 
