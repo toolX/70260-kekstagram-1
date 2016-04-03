@@ -103,15 +103,17 @@
    */
   var resizeForm = document.forms['upload-resize'];
 
-  resizeForm.x.oninput = function() {
-    resizeFormIsValid();
-  };
-  resizeForm.y.oninput = function() {
-    resizeFormIsValid();
-  };
-  resizeForm.size.oninput = function() {
-    resizeFormIsValid();
-  };
+  resizeForm.x.oninput = resizeFormIsValid;
+  //resizeForm.x.oninvalid = function() {
+  //  var div = document.createElement('div');
+  //  div.className = 'alert';
+  //  div.innerHTML = resizeForm.x.validity.toString;
+
+  //  document.body.insertBefore(div, document.body.firstChild);
+  //  console.log(123);
+  //};
+  resizeForm.y.oninput = resizeFormIsValid;
+  resizeForm.size.oninput = resizeFormIsValid;
   resizeFormIsValid();
 
   /**
