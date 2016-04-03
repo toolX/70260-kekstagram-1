@@ -72,22 +72,25 @@
    * @return {boolean}
    */
   function resizeFormIsValid() {
-    var resizeX = +resizeForm.x.value;
-    var resizeY = +resizeForm.y.value;
-    var size = +resizeForm.size.value;
+    var resizeX = resizeForm.x;
+    var resizeY = resizeForm.y;
+    var size = resizeForm.size;
+    var submit = resizeForm.fwd;
+    resizeForm.x.required = true;
+    resizeForm.y.required = true;
+    resizeForm.size.required = true;
     resizeForm.x.min = 0;
     resizeForm.y.min = 0;
-    resizeForm.size.max = currentResizer._image.naturalWidth || currentResizer._image.naturalHeight;
-    if ((resizeX + size) > currentResizer._image.naturalWidth) {
-      return false;
-    } else if ((resizeY + size) > currentResizer._image.naturalHeight) {
-      return false;
-    } else if (resizeX < 0) {
-      return false;
-    } else if (resizeY < 0) {
-      return false;
+    resizeForm.size.min = 20;
+    if (resizeX.validity.valid && resizeY.validity.valid && size.validity.valid) {
+      submit.disabled = false;
+      submit.classList.remove('disabled');
+      console.log('ok');
+    } else {
+      submit.disabled = true;
+      submit.classList.add('disabled');
+      console.log('error');
     }
-    return true;
   }
 
   /**
@@ -101,6 +104,17 @@
    * @type {HTMLFormElement}
    */
   var resizeForm = document.forms['upload-resize'];
+
+  resizeForm.x.oninput = function() {
+    resizeFormIsValid();
+  };
+  resizeForm.y.oninput = function() {
+    resizeFormIsValid();
+  };
+  resizeForm.size.oninput = function() {
+    resizeFormIsValid();
+  };
+  resizeFormIsValid();
 
   /**
    * Форма добавления фильтра.
@@ -209,15 +223,11 @@
   resizeForm.onsubmit = function(evt) {
     evt.preventDefault();
 
-    if (resizeFormIsValid()) {
-      filterImage.src = currentResizer.exportImage().src;
+    filterImage.src = currentResizer.exportImage().src;
 
-      resizeForm.classList.add('invisible');
-      filterForm.classList.remove('invisible');
-      resizeForm.fwd.classList.remove('disabled');
-    } else {
-      resizeForm.fwd.classList.add('disabled');
-    }
+    resizeForm.classList.add('invisible');
+    filterForm.classList.remove('invisible');
+    resizeForm.fwd.classList.remove('disabled');
   };
 
   /**
