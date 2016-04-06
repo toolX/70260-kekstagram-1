@@ -260,8 +260,9 @@
     var date = new Date();
     var year = date.getFullYear() - 1;
     var myBirthday = new Date(year + '-05-15');
-    var firstDateFormatted = Math.floor((Date.now() - myBirthday) / 24 / 60 / 60 / 1000);
-    var dateToExpire = Date.now() + firstDateFormatted * 24 * 60 * 60 * 1000;
+    var MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+    var firstDateFormatted = Math.floor((Date.now() - myBirthday) / MILLISECONDS_PER_DAY);
+    var dateToExpire = Date.now() + firstDateFormatted * MILLISECONDS_PER_DAY;
     var formattedDateToExpire = new Date(dateToExpire).toUTCString();
     browserCookies.set('lastFilter', elems.value);
     browserCookies.set('expires', formattedDateToExpire);
@@ -275,8 +276,9 @@
 
   var browserCookies = require('browser-cookies');
   var elems = filterForm['upload-filter'];
+  var filterName = browserCookies.get('lastFilter') || 'none';
   elems.value = browserCookies.get('lastFilter');
-  filterImage.className = 'filter-image-preview ' + 'filter-' + browserCookies.get('lastFilter');
+  filterImage.className = 'filter-image-preview ' + 'filter-' + filterName;
 
   /**
    * Обработчик изменения фильтра. Добавляет класс из filterMap соответствующий
