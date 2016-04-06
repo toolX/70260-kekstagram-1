@@ -257,20 +257,14 @@
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
 
-    var elems = filterForm['upload-filter'];
-    for (var i = 0; i < elems.length; i++) {
-      if (elems[i].checked) {
-        var date = new Date();
-        var year = date.getFullYear() - 1;
-        var myBirthday = new Date(year + '-05-15');
-        var firstDateFormatted = Math.floor((Date.now() - myBirthday) / 24 / 60 / 60 / 1000);
-        var dateToExpire = Date.now() + firstDateFormatted * 24 * 60 * 60 * 1000;
-        var formattedDateToExpire = new Date(dateToExpire).toUTCString();
-        console.log(formattedDateToExpire);
-        browserCookies.set('lastFilter', elems[i].value);
-        browserCookies.set('expires', formattedDateToExpire);
-      }
-    }
+    var date = new Date();
+    var year = date.getFullYear() - 1;
+    var myBirthday = new Date(year + '-05-15');
+    var firstDateFormatted = Math.floor((Date.now() - myBirthday) / 24 / 60 / 60 / 1000);
+    var dateToExpire = Date.now() + firstDateFormatted * 24 * 60 * 60 * 1000;
+    var formattedDateToExpire = new Date(dateToExpire).toUTCString();
+    browserCookies.set('lastFilter', elems.value);
+    browserCookies.set('expires', formattedDateToExpire);
 
     cleanupResizer();
     updateBackground();
@@ -281,12 +275,8 @@
 
   var browserCookies = require('browser-cookies');
   var elems = filterForm['upload-filter'];
-  for (var i = 0; i < elems.length; i++) {
-    if (elems[i].value === browserCookies.get('lastFilter')) {
-      elems[i].checked = true;
-      filterImage.className = 'filter-image-preview ' + 'filter-' + browserCookies.get('lastFilter');
-    }
-  }
+  elems.value = browserCookies.get('lastFilter');
+  filterImage.className = 'filter-image-preview ' + 'filter-' + browserCookies.get('lastFilter');
 
   /**
    * Обработчик изменения фильтра. Добавляет класс из filterMap соответствующий
