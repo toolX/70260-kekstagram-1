@@ -257,12 +257,28 @@
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
 
+    var date = new Date();
+    var year = date.getFullYear() - 1;
+    var myBirthday = new Date(year + '-05-15');
+    var MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+    var firstDateFormatted = Math.floor((Date.now() - myBirthday) / MILLISECONDS_PER_DAY);
+    var dateToExpire = Date.now() + firstDateFormatted * MILLISECONDS_PER_DAY;
+    var formattedDateToExpire = new Date(dateToExpire).toUTCString();
+    browserCookies.set('lastFilter', elems.value);
+    browserCookies.set('expires', formattedDateToExpire);
+
     cleanupResizer();
     updateBackground();
 
     filterForm.classList.add('invisible');
     uploadForm.classList.remove('invisible');
   };
+
+  var browserCookies = require('browser-cookies');
+  var elems = filterForm['upload-filter'];
+  var filterName = browserCookies.get('lastFilter') || 'none';
+  elems.value = filterName;
+  filterImage.className = 'filter-image-preview ' + 'filter-' + filterName;
 
   /**
    * Обработчик изменения фильтра. Добавляет класс из filterMap соответствующий
