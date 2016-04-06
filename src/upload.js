@@ -277,7 +277,7 @@
   var browserCookies = require('browser-cookies');
   var elems = filterForm['upload-filter'];
   var filterName = browserCookies.get('lastFilter') || 'none';
-  elems.value = browserCookies.get('lastFilter');
+  elems.value = filterName;
   filterImage.className = 'filter-image-preview ' + 'filter-' + filterName;
 
   /**
