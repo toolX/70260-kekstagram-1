@@ -6,46 +6,46 @@
 
   var container = document.querySelector('.pictures');
   var template = document.querySelector('#picture-template');
+  var elementToClone;
+  if ('content' in template) {
+    elementToClone = template.content.children[0];
+  } else {
+    elementToClone = template.children[0];
+  }
   window.pictures.forEach(function(picture) {
-    var element = getElementFromTemplate(picture);
-    container.appendChild(element);
+    var templateData = getElementFromTemplate(picture);
+    container.appendChild(templateData);
   });
+  filters.classList.remove('hidden');
 
   function getElementFromTemplate(data) {
-    var element;
-    if ('content' in template) {
-      element = template.content.childNodes[0].cloneNode(true);
-    } else {
-      element = template.children[0].cloneNode(true);
-    }
-    element.querySelector('.picture-comments').textContent = data.comments;
-    element.querySelector('.picture-likes').textContent = data.likes;
 
-    var backgroundImage = new Image();
+    var clonedTemplate = elementToClone.cloneNode(true);
+    clonedTemplate.querySelector('.picture-comments').textContent = data.comments;
+    clonedTemplate.querySelector('.picture-likes').textContent = data.likes;
+
+    var contentImage = new Image(182, 182);
 
     var imageLoadTimeout;
-    backgroundImage.onload = function() {
-      element.style.backgroundImage = 'url(\'' + backgroundImage.src + '\')';
+    contentImage.onload = function() {
       clearTimeout(imageLoadTimeout);
-      var img = element.querySelector('img');
-      element.replaceChild(backgroundImage, img);
-      backgroundImage.width = 182;
-      backgroundImage.height = 182;
+      var img = clonedTemplate.querySelector('img');
+      clonedTemplate.replaceChild(contentImage, img);
     };
-    backgroundImage.onerror = function() {
-      element.classList.add('picture-load-failure');
+    contentImage.onerror = function() {
+      clearTimeout(imageLoadTimeout);
+      clonedTemplate.classList.add('picture-load-failure');
     };
 
     var IMAGE_TIMEOUT = 5000;
 
     imageLoadTimeout = setTimeout(function() {
-      backgroundImage.src = '';
-      element.classList.add('picture-load-failure');
+      contentImage.src = '';
+      clonedTemplate.classList.add('picture-load-failure');
     }, IMAGE_TIMEOUT);
 
-    backgroundImage.src = data.url;
-    return element;
+    contentImage.src = data.url;
+    return clonedTemplate;
   }
-  filters.classList.remove('hidden');
 
 })();
