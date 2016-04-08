@@ -257,15 +257,16 @@
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
 
-    var date = new Date();
-    var year = date.getFullYear() - 1;
+    var currentDate = new Date();
+    var year = currentDate.getFullYear();
     var myBirthday = new Date(year + '-05-15');
+    if (currentDate < myBirthday) {
+      myBirthday = new Date((year - 1) + '-05-15');
+    }
     var MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
-    var firstDateFormatted = Math.floor((Date.now() - myBirthday) / MILLISECONDS_PER_DAY);
-    var dateToExpire = Date.now() + firstDateFormatted * MILLISECONDS_PER_DAY;
-    var formattedDateToExpire = new Date(dateToExpire).toUTCString();
-    browserCookies.set('lastFilter', elems.value);
-    browserCookies.set('expires', formattedDateToExpire);
+    var daysAfterBirthday = Math.floor((Date.now() - myBirthday) / MILLISECONDS_PER_DAY);
+    var expireDate = {expires: daysAfterBirthday};
+    browserCookies.set('lastFilter', elems.value, expireDate);
 
     cleanupResizer();
     updateBackground();
