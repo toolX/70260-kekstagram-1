@@ -2,21 +2,81 @@
 
 (function() {
   var filters = document.querySelector('.filters');
-  filters.classList.add('hidden');
 
+  var pictures = [];
   var container = document.querySelector('.pictures');
   var template = document.querySelector('#picture-template');
+
+  getPictures();
+
   var elementToClone;
   if ('content' in template) {
     elementToClone = template.content.children[0];
   } else {
     elementToClone = template.children[0];
   }
-  window.pictures.forEach(function(picture) {
-    var templateData = getElementFromTemplate(picture);
-    container.appendChild(templateData);
-  });
-  filters.classList.remove('hidden');
+
+  var showPictures = function(picturesToShow) {
+    container.innerHTML = '';
+    picturesToShow.forEach(function(picture) {
+      var templateData = getElementFromTemplate(picture);
+      container.appendChild(templateData);
+    });
+  };
+
+  var pictureFilters = filters.querySelectorAll('input');
+  for (var i = 0; i < pictureFilters.length; i++) {
+    pictureFilters[i].onclick = function(event) {
+      var checkedElementID = event.target.id;
+      setActiveFilter(checkedElementID);
+    };
+  }
+
+  function setActiveFilter(id) {
+    var filteredPictures = pictures.slice(0);
+
+    switch (id) {
+      case 'filter-popular':
+        break;
+      case 'filter-new':
+        filteredPictures = filteredPictures.sort(function(a, b) {
+          return(a.date - b.date);
+        });
+        break;
+      case 'filter-discussed':
+        filteredPictures = filteredPictures.sort(function(a, b) {
+          return b.comments - a.comments;
+        });
+        break;
+    }
+    showPictures(filteredPictures);
+  }
+
+  function getPictures() {
+    container.classList.add('pictures-loading');
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://o0.github.io/assets/json/pictures.json');
+    xhr.onerror = xhr.ontimeout = function() {
+      container.classList.add('pictures-failure');
+    };
+    xhr.onload = function(event) {
+      container.classList.remove('pictures-loading');
+      var rawData = event.target.response;
+      var loadedPictures = JSON.parse(rawData);
+      loadedPictures.forEach(function(pictureData) {
+        var stringToDate = pictureData;
+        stringToDate.date = new Date(stringToDate.date);
+        return stringToDate;
+      });
+      pictures = loadedPictures;
+      showPictures(loadedPictures);
+      filters.classList.remove('hidden');
+    };
+
+    filters.classList.add('hidden');
+
+    xhr.send();
+  }
 
   function getElementFromTemplate(data) {
 
