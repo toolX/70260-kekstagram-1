@@ -2,7 +2,6 @@
 
 (function() {
   var filters = document.querySelector('.filters');
-  filters.classList.add('hidden');
 
   var pictures = [];
   var container = document.querySelector('.pictures');
@@ -24,8 +23,6 @@
       container.appendChild(templateData);
     });
   };
-
-  filters.classList.remove('hidden');
 
   var pictureFilters = filters.querySelectorAll('input');
   for (var i = 0; i < pictureFilters.length; i++) {
@@ -68,7 +65,10 @@
       var loadedPictures = JSON.parse(rawData);
       pictures = loadedPictures;
       showPictures(loadedPictures);
+      filters.classList.remove('hidden');
     };
+
+    filters.classList.add('hidden');
 
     xhr.send();
   }
