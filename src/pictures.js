@@ -40,7 +40,7 @@
         break;
       case 'filter-new':
         filteredPictures = filteredPictures.sort(function(a, b) {
-          return((new Date(a.date)) - (new Date(b.date)));
+          return(a.date - b.date);
         });
         break;
       case 'filter-discussed':
@@ -63,6 +63,11 @@
       container.classList.remove('pictures-loading');
       var rawData = event.target.response;
       var loadedPictures = JSON.parse(rawData);
+      loadedPictures.forEach(function(pictureData) {
+        var stringToDate = pictureData;
+        stringToDate.date = new Date(stringToDate.date);
+        return stringToDate;
+      });
       pictures = loadedPictures;
       showPictures(loadedPictures);
       filters.classList.remove('hidden');
