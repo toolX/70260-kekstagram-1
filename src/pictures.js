@@ -40,17 +40,10 @@
 
     switch (id) {
       case 'filter-popular':
-        filteredPictures = pictures;
         break;
       case 'filter-new':
         filteredPictures = filteredPictures.sort(function(a, b) {
-          if (a.date < b.date) {
-            return 1;
-          }
-          if (a.date > b.date) {
-            return -1;
-          }
-          return 0;
+          return((new Date(a.date)) - (new Date(b.date)));
         });
         break;
       case 'filter-discussed':
