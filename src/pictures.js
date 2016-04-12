@@ -4,8 +4,27 @@
   var filters = document.querySelector('.filters');
 
   var pictures = [];
+  var filteredPictures = [];
+  var activeFilter = 'filter-popular';
+  var currentPage = 0;
+  var PAGE_SIZE = 12;
   var container = document.querySelector('.pictures');
   var template = document.querySelector('#picture-template');
+
+  var scrollTimeout;
+
+  window.addEventListener('scroll', function() {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+      var divPicturesCoordinates = container.getBoundingClientRect();
+      var viewportSize = window.innerHeight;
+      if (divPicturesCoordinates.bottom - viewportSize <= 0) {
+        if (currentPage < Math.ceil(filteredPictures.length / PAGE_SIZE)) {
+          showPictures(filteredPictures, ++currentPage);
+        }
+      }
+    }, 100);
+  });
 
   getPictures();
 
@@ -16,9 +35,16 @@
     elementToClone = template.children[0];
   }
 
-  var showPictures = function(picturesToShow) {
-    container.innerHTML = '';
-    picturesToShow.forEach(function(picture) {
+  var showPictures = function(picturesToShow, pageNumber, replace) {
+    if (replace) {
+      container.innerHTML = '';
+    }
+
+    var from = pageNumber * PAGE_SIZE;
+    var to = from + PAGE_SIZE;
+    var pagePictures = picturesToShow.slice(from, to);
+
+    pagePictures.forEach(function(picture) {
       var templateData = getElementFromTemplate(picture);
       container.appendChild(templateData);
     });
@@ -33,7 +59,7 @@
   }
 
   function setActiveFilter(id) {
-    var filteredPictures = pictures.slice(0);
+    filteredPictures = pictures.slice(0);
 
     switch (id) {
       case 'filter-popular':
@@ -49,7 +75,8 @@
         });
         break;
     }
-    showPictures(filteredPictures);
+    showPictures(filteredPictures, 0, true);
+    currentPage = 0;
   }
 
   function getPictures() {
@@ -69,7 +96,8 @@
         return stringToDate;
       });
       pictures = loadedPictures;
-      showPictures(loadedPictures);
+      showPictures(loadedPictures, 0);
+      setActiveFilter(activeFilter);
       filters.classList.remove('hidden');
     };
 
