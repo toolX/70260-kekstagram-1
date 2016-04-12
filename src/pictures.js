@@ -11,18 +11,22 @@
   var container = document.querySelector('.pictures');
   var template = document.querySelector('#picture-template');
 
+  var showNextPage = function() {
+    var divPicturesCoordinates = container.getBoundingClientRect();
+    var viewportHeight = window.innerHeight;
+    if (divPicturesCoordinates.bottom - viewportHeight <= 0) {
+      if (currentPage < Math.ceil(filteredPictures.length / PAGE_SIZE)) {
+        showPictures(filteredPictures, ++currentPage);
+      }
+    }
+  };
+
   var scrollTimeout;
 
   window.addEventListener('scroll', function() {
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(function() {
-      var divPicturesCoordinates = container.getBoundingClientRect();
-      var viewportSize = window.innerHeight;
-      if (divPicturesCoordinates.bottom - viewportSize <= 0) {
-        if (currentPage < Math.ceil(filteredPictures.length / PAGE_SIZE)) {
-          showPictures(filteredPictures, ++currentPage);
-        }
-      }
+      showNextPage();
     }, 100);
   });
 
@@ -48,6 +52,7 @@
       var templateData = getElementFromTemplate(picture);
       container.appendChild(templateData);
     });
+    showNextPage();
   };
 
   var pictureFilters = filters.querySelectorAll('input');
@@ -96,7 +101,6 @@
         return stringToDate;
       });
       pictures = loadedPictures;
-      showPictures(loadedPictures, 0);
       setActiveFilter(activeFilter);
       filters.classList.remove('hidden');
     };
