@@ -11,24 +11,26 @@
   var container = document.querySelector('.pictures');
   var template = document.querySelector('#picture-template');
 
-  var showNextPage = function() {
-    var divPicturesCoordinates = container.getBoundingClientRect();
-    var viewportHeight = window.innerHeight;
-    if (divPicturesCoordinates.bottom - viewportHeight <= 0) {
-      if (currentPage < Math.ceil(filteredPictures.length / PAGE_SIZE)) {
-        showPictures(filteredPictures, ++currentPage);
-      }
-    }
-  };
-
   var scrollTimeout;
 
   window.addEventListener('scroll', function() {
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(function() {
-      showNextPage();
+      renderPage();
     }, 100);
   });
+
+  var pageCanBeRendered = function() {
+    var PicturesBottomCoordinates = container.getBoundingClientRect().bottom;
+    var viewportSize = window.innerHeight;
+    if (PicturesBottomCoordinates > viewportSize) {
+      return false;
+    }
+    if (currentPage * PAGE_SIZE > filteredPictures.length) {
+      return false;
+    }
+    return true;
+  };
 
   getPictures();
 
@@ -39,10 +41,7 @@
     elementToClone = template.children[0];
   }
 
-  var showPictures = function(picturesToShow, pageNumber, replace) {
-    if (replace) {
-      container.innerHTML = '';
-    }
+  var showPictures = function(picturesToShow, pageNumber) {
 
     var from = pageNumber * PAGE_SIZE;
     var to = from + PAGE_SIZE;
@@ -52,7 +51,16 @@
       var templateData = getElementFromTemplate(picture);
       container.appendChild(templateData);
     });
-    showNextPage();
+  };
+
+  var renderPage = function() {
+    if(currentPage === 0) {
+      container.innerHTML = '';
+    }
+
+    while(pageCanBeRendered()) {
+      showPictures(filteredPictures, currentPage++);
+    }
   };
 
   var pictureFilters = filters.querySelectorAll('input');
@@ -80,8 +88,8 @@
         });
         break;
     }
-    showPictures(filteredPictures, 0, true);
     currentPage = 0;
+    renderPage(filteredPictures, 0);
   }
 
   function getPictures() {
