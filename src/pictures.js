@@ -4,8 +4,33 @@
   var filters = document.querySelector('.filters');
 
   var pictures = [];
+  var filteredPictures = [];
+  var activeFilter = 'filter-popular';
+  var currentPage = 0;
+  var PAGE_SIZE = 12;
   var container = document.querySelector('.pictures');
   var template = document.querySelector('#picture-template');
+
+  var scrollTimeout;
+
+  window.addEventListener('scroll', function() {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+      renderPage();
+    }, 100);
+  });
+
+  var pageCanBeRendered = function() {
+    var PicturesBottomCoordinates = container.getBoundingClientRect().bottom;
+    var viewportSize = window.innerHeight;
+    if (PicturesBottomCoordinates > viewportSize) {
+      return false;
+    }
+    if (currentPage * PAGE_SIZE > filteredPictures.length) {
+      return false;
+    }
+    return true;
+  };
 
   getPictures();
 
@@ -16,12 +41,26 @@
     elementToClone = template.children[0];
   }
 
-  var showPictures = function(picturesToShow) {
-    container.innerHTML = '';
-    picturesToShow.forEach(function(picture) {
+  var showPictures = function(picturesToShow, pageNumber) {
+
+    var from = pageNumber * PAGE_SIZE;
+    var to = from + PAGE_SIZE;
+    var pagePictures = picturesToShow.slice(from, to);
+
+    pagePictures.forEach(function(picture) {
       var templateData = getElementFromTemplate(picture);
       container.appendChild(templateData);
     });
+  };
+
+  var renderPage = function() {
+    if(currentPage === 0) {
+      container.innerHTML = '';
+    }
+
+    while(pageCanBeRendered()) {
+      showPictures(filteredPictures, currentPage++);
+    }
   };
 
   var pictureFilters = filters.querySelectorAll('input');
@@ -33,7 +72,7 @@
   }
 
   function setActiveFilter(id) {
-    var filteredPictures = pictures.slice(0);
+    filteredPictures = pictures.slice(0);
 
     switch (id) {
       case 'filter-popular':
@@ -49,7 +88,8 @@
         });
         break;
     }
-    showPictures(filteredPictures);
+    currentPage = 0;
+    renderPage(filteredPictures, 0);
   }
 
   function getPictures() {
@@ -69,7 +109,7 @@
         return stringToDate;
       });
       pictures = loadedPictures;
-      showPictures(loadedPictures);
+      setActiveFilter(activeFilter);
       filters.classList.remove('hidden');
     };
 
