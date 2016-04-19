@@ -63,13 +63,12 @@
     }
   };
 
-  var pictureFilters = filters.querySelectorAll('input');
-  for (var i = 0; i < pictureFilters.length; i++) {
-    pictureFilters[i].onclick = function(event) {
-      var checkedElementID = event.target.id;
-      setActiveFilter(checkedElementID);
-    };
-  }
+  filters.addEventListener('click', function(event) {
+    var checkedElementID = event.target;
+    if (checkedElementID.classList.contains('filters-radio')) {
+      setActiveFilter(checkedElementID.id);
+    }
+  });
 
   function setActiveFilter(id) {
     filteredPictures = pictures.slice(0);
