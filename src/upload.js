@@ -83,10 +83,10 @@
     resizeForm.y.min = 0;
     resizeForm.size.min = 20;
     if (resizeX.validity.valid && resizeY.validity.valid && size.validity.valid) {
-      if ((+resizeX.value + size.value) > currentResizer._image.naturalWidth) {
+      if ((parseInt(resizeX.value, 10) + parseInt(size.value, 10)) > currentResizer._image.naturalWidth) {
         submit.disabled = true;
         submit.classList.add('disabled');
-      } if ((+resizeY.value + size.value) > currentResizer._image.naturalHeight) {
+      } if ((parseInt(resizeY.value, 10) + parseInt(size.value, 10)) > currentResizer._image.naturalHeight) {
         submit.disabled = true;
         submit.classList.add('disabled');
       } else {
@@ -111,9 +111,12 @@
    */
   var resizeForm = document.forms['upload-resize'];
 
-  resizeForm.x.oninput = resizeFormIsValid;
-  resizeForm.y.oninput = resizeFormIsValid;
-  resizeForm.size.oninput = resizeFormIsValid;
+  resizeForm.addEventListener('input', function(event) {
+    var checkedElementID = event.target;
+    if (checkedElementID.id.contains('resize')) {
+      resizeFormIsValid();
+    }
+  });
 
   /**
    * Форма добавления фильтра.
@@ -212,6 +215,7 @@
     inputX.value = x;
     inputY.value = y;
     inputSize.value = side;
+    resizeFormIsValid();
   }
   window.addEventListener('resizerchange', resizerChange);
 
