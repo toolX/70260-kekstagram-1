@@ -6,6 +6,7 @@ var galleryOverlayImage = galleryContainer.querySelector('.gallery-overlay-image
 var likesCount = galleryContainer.querySelector('.likes-count');
 var commentsCount = galleryContainer.querySelector('.comments-count');
 var photoArray = [];
+var index = null;
 
 var getPictures = function(pictures) {
   photoArray.length = 0;
@@ -18,6 +19,21 @@ var setCurrentPicture = function(number) {
   galleryOverlayImage.src = photoArray[number].url;
   likesCount.innerHTML = +photoArray[number].likes;
   commentsCount.innerHTML = +photoArray[number].comments;
+
+  index = number;
+};
+
+var nextPhoto = function(number) {
+  if (!photoArray[number + 1]) {
+    return;
+  }
+  var failedError = 'failed';
+  var mp4Error = 'mp4';
+  if (photoArray[number + 1].url.contains(failedError) || photoArray[number + 1].url.contains(mp4Error)) {
+    nextPhoto(number + 1);
+    return;
+  }
+  setCurrentPicture(number + 1);
 };
 
 var showGallery = function(pictureIndex) {
@@ -37,7 +53,7 @@ var hideGallery = function() {
 
 var _onPhotoClick = function(event) {
   event.preventDefault();
-  setCurrentPicture();
+  nextPhoto(index);
 };
 
 var _onDocumentKeyDown = function(event) {
