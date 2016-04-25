@@ -29,7 +29,7 @@ var nextPhoto = function(number) {
   }
   var failedError = 'failed';
   var mp4Error = 'mp4';
-  if (photoArray[number + 1].url.contains(failedError) || photoArray[number + 1].url.contains(mp4Error)) {
+  if (photoArray[number + 1].url.includes(failedError) || photoArray[number + 1].url.includes(mp4Error)) {
     nextPhoto(number + 1);
     return;
   }
