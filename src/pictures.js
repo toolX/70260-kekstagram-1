@@ -10,6 +10,8 @@ var PAGE_SIZE = 12;
 var container = document.querySelector('.pictures');
 var template = document.querySelector('#picture-template');
 
+var Gallery = require('./gallery');
+
 var scrollTimeout;
 
 window.addEventListener('scroll', function() {
@@ -46,9 +48,14 @@ var showPictures = function(picturesToShow, pageNumber) {
   var to = from + PAGE_SIZE;
   var pagePictures = picturesToShow.slice(from, to);
 
-  pagePictures.forEach(function(picture) {
+  pagePictures.forEach(function(picture, pictureIndex) {
     var templateData = getElementFromTemplate(picture);
     container.appendChild(templateData);
+
+    templateData.addEventListener('click', function(event) {
+      event.preventDefault();
+      Gallery.showGallery(from + pictureIndex);
+    });
   });
 };
 
@@ -88,6 +95,7 @@ function setActiveFilter(id) {
   }
   currentPage = 0;
   renderPage(filteredPictures, 0);
+  Gallery.getPictures(filteredPictures);
 }
 
 function getPictures() {
