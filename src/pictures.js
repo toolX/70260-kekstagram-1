@@ -9,7 +9,6 @@ var activeFilter = 'filter-popular';
 var currentPage = 0;
 var PAGE_SIZE = 12;
 var container = document.querySelector('.pictures');
-//var template = document.querySelector('#picture-template');
 
 var Gallery = require('./gallery');
 
@@ -38,13 +37,6 @@ var pageCanBeRendered = function() {
 
 getPictures();
 
-//var elementToClone;
-//if ('content' in template) {
-//  elementToClone = template.content.children[0];
-//} else {
-//  elementToClone = template.children[0];
-//}
-
 var showPictures = function(picturesToShow, pageNumber) {
 
   var from = pageNumber * PAGE_SIZE;
@@ -52,24 +44,12 @@ var showPictures = function(picturesToShow, pageNumber) {
   var pagePictures = picturesToShow.slice(from, to);
 
   renderedElements = renderedElements.concat(pagePictures.map(function(photo, pictureIndex) {
-    var photoElement = new Photo(photo);
-    photoElement.getElementFromTemplate();
-    container.appendChild(photoElement.element);
+    var photoElement = new Photo(photo, from + pictureIndex);
 
-    photoElement.onPhotoClick(from + pictureIndex);
+    container.appendChild(photoElement.element);
 
     return photoElement;
   }));
-
-  /*pagePictures.forEach(function(picture, pictureIndex) {
-    var templateData = getElementFromTemplate(picture);
-    container.appendChild(templateData);
-
-    templateData.addEventListener('click', function(event) {
-      event.preventDefault();
-      Gallery.showGallery(from + pictureIndex);
-    });
-  });*/
 };
 
 var renderPage = function() {
@@ -136,33 +116,3 @@ function getPictures() {
 
   xhr.send();
 }
-
-/*function getElementFromTemplate(data) {
-
-  var clonedTemplate = elementToClone.cloneNode(true);
-  clonedTemplate.querySelector('.picture-comments').textContent = data.comments;
-  clonedTemplate.querySelector('.picture-likes').textContent = data.likes;
-
-  var contentImage = new Image(182, 182);
-
-  var imageLoadTimeout;
-  contentImage.onload = function() {
-    clearTimeout(imageLoadTimeout);
-    var img = clonedTemplate.querySelector('img');
-    clonedTemplate.replaceChild(contentImage, img);
-  };
-  contentImage.onerror = function() {
-    clearTimeout(imageLoadTimeout);
-    clonedTemplate.classList.add('picture-load-failure');
-  };
-
-  var IMAGE_TIMEOUT = 5000;
-
-  imageLoadTimeout = setTimeout(function() {
-    contentImage.src = '';
-    clonedTemplate.classList.add('picture-load-failure');
-  }, IMAGE_TIMEOUT);
-
-  contentImage.src = data.url;
-  return clonedTemplate;
-}*/
