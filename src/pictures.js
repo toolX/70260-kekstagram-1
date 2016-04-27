@@ -54,7 +54,10 @@ var showPictures = function(picturesToShow, pageNumber) {
 
 var renderPage = function() {
   if(currentPage === 0) {
-    container.innerHTML = '';
+    renderedElements.forEach(function(photo) {
+      photo.remove();
+    });
+    renderedElements = [];
   }
 
   while(pageCanBeRendered()) {
