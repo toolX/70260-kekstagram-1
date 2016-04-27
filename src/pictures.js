@@ -4,13 +4,16 @@ var filters = document.querySelector('.filters');
 
 var pictures = [];
 var filteredPictures = [];
+var renderedElements = [];
 var activeFilter = 'filter-popular';
 var currentPage = 0;
 var PAGE_SIZE = 12;
 var container = document.querySelector('.pictures');
-var template = document.querySelector('#picture-template');
+//var template = document.querySelector('#picture-template');
 
 var Gallery = require('./gallery');
+
+var Photo = require('./photo');
 
 var scrollTimeout;
 
@@ -35,12 +38,12 @@ var pageCanBeRendered = function() {
 
 getPictures();
 
-var elementToClone;
-if ('content' in template) {
-  elementToClone = template.content.children[0];
-} else {
-  elementToClone = template.children[0];
-}
+//var elementToClone;
+//if ('content' in template) {
+//  elementToClone = template.content.children[0];
+//} else {
+//  elementToClone = template.children[0];
+//}
 
 var showPictures = function(picturesToShow, pageNumber) {
 
@@ -48,7 +51,17 @@ var showPictures = function(picturesToShow, pageNumber) {
   var to = from + PAGE_SIZE;
   var pagePictures = picturesToShow.slice(from, to);
 
-  pagePictures.forEach(function(picture, pictureIndex) {
+  renderedElements = renderedElements.concat(pagePictures.map(function(photo, pictureIndex) {
+    var photoElement = new Photo(photo);
+    photoElement.getElementFromTemplate();
+    container.appendChild(photoElement.element);
+
+    photoElement.onPhotoClick(from + pictureIndex);
+
+    return photoElement;
+  }));
+
+  /*pagePictures.forEach(function(picture, pictureIndex) {
     var templateData = getElementFromTemplate(picture);
     container.appendChild(templateData);
 
@@ -56,7 +69,7 @@ var showPictures = function(picturesToShow, pageNumber) {
       event.preventDefault();
       Gallery.showGallery(from + pictureIndex);
     });
-  });
+  });*/
 };
 
 var renderPage = function() {
@@ -124,7 +137,7 @@ function getPictures() {
   xhr.send();
 }
 
-function getElementFromTemplate(data) {
+/*function getElementFromTemplate(data) {
 
   var clonedTemplate = elementToClone.cloneNode(true);
   clonedTemplate.querySelector('.picture-comments').textContent = data.comments;
@@ -152,4 +165,4 @@ function getElementFromTemplate(data) {
 
   contentImage.src = data.url;
   return clonedTemplate;
-}
+}*/
