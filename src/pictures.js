@@ -4,13 +4,15 @@ var filters = document.querySelector('.filters');
 
 var pictures = [];
 var filteredPictures = [];
+var renderedElements = [];
 var activeFilter = 'filter-popular';
 var currentPage = 0;
 var PAGE_SIZE = 12;
 var container = document.querySelector('.pictures');
-var template = document.querySelector('#picture-template');
 
 var Gallery = require('./gallery');
+
+var Photo = require('./photo');
 
 var scrollTimeout;
 
@@ -35,33 +37,27 @@ var pageCanBeRendered = function() {
 
 getPictures();
 
-var elementToClone;
-if ('content' in template) {
-  elementToClone = template.content.children[0];
-} else {
-  elementToClone = template.children[0];
-}
-
 var showPictures = function(picturesToShow, pageNumber) {
 
   var from = pageNumber * PAGE_SIZE;
   var to = from + PAGE_SIZE;
   var pagePictures = picturesToShow.slice(from, to);
 
-  pagePictures.forEach(function(picture, pictureIndex) {
-    var templateData = getElementFromTemplate(picture);
-    container.appendChild(templateData);
+  renderedElements = renderedElements.concat(pagePictures.map(function(photo, pictureIndex) {
+    var photoElement = new Photo(photo, from + pictureIndex);
 
-    templateData.addEventListener('click', function(event) {
-      event.preventDefault();
-      Gallery.showGallery(from + pictureIndex);
-    });
-  });
+    container.appendChild(photoElement.element);
+
+    return photoElement;
+  }));
 };
 
 var renderPage = function() {
   if(currentPage === 0) {
-    container.innerHTML = '';
+    renderedElements.forEach(function(photo) {
+      photo.remove();
+    });
+    renderedElements = [];
   }
 
   while(pageCanBeRendered()) {
@@ -122,34 +118,4 @@ function getPictures() {
   filters.classList.add('hidden');
 
   xhr.send();
-}
-
-function getElementFromTemplate(data) {
-
-  var clonedTemplate = elementToClone.cloneNode(true);
-  clonedTemplate.querySelector('.picture-comments').textContent = data.comments;
-  clonedTemplate.querySelector('.picture-likes').textContent = data.likes;
-
-  var contentImage = new Image(182, 182);
-
-  var imageLoadTimeout;
-  contentImage.onload = function() {
-    clearTimeout(imageLoadTimeout);
-    var img = clonedTemplate.querySelector('img');
-    clonedTemplate.replaceChild(contentImage, img);
-  };
-  contentImage.onerror = function() {
-    clearTimeout(imageLoadTimeout);
-    clonedTemplate.classList.add('picture-load-failure');
-  };
-
-  var IMAGE_TIMEOUT = 5000;
-
-  imageLoadTimeout = setTimeout(function() {
-    contentImage.src = '';
-    clonedTemplate.classList.add('picture-load-failure');
-  }, IMAGE_TIMEOUT);
-
-  contentImage.src = data.url;
-  return clonedTemplate;
 }
