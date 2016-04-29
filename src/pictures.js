@@ -91,8 +91,7 @@ function setActiveFilter(id) {
   }
   currentPage = 0;
   renderPage(filteredPictures, 0);
-  var galleryElement = new Gallery();
-  galleryElement.getPictures(filteredPictures);
+  Gallery.getPictures(filteredPictures);
 }
 
 function getPictures() {

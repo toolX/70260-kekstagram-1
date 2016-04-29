@@ -73,6 +73,6 @@ function Gallery() {
 
 }
 
-module.exports = Gallery;
-//module.exports.getPictures = self.getPictures;
-//module.exports.showGallery = self.showGallery;
+var gallery = new Gallery();
+
+module.exports = gallery;

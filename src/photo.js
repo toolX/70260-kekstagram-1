@@ -46,8 +46,7 @@ function Photo(data, pictureIndex) {
 
   this.onPhotoClick = function(evt) {
     evt.preventDefault();
-    var galleryElement = new Gallery();
-    galleryElement.showGallery(pictureIndex);
+    Gallery.showGallery(pictureIndex);
   };
 
   this.remove = function() {
