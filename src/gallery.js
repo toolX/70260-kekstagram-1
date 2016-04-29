@@ -8,65 +8,71 @@ var commentsCount = galleryContainer.querySelector('.comments-count');
 var photoArray = [];
 var index = null;
 
-var getPictures = function(pictures) {
-  photoArray.length = 0;
-  for (var i = 0; i < pictures.length; i++) {
-    photoArray = photoArray.concat(pictures[i]);
-  }
-};
+function Gallery() {
+  var self = this;
 
-var setCurrentPicture = function(number) {
-  galleryOverlayImage.src = photoArray[number].url;
-  likesCount.innerHTML = +photoArray[number].likes;
-  commentsCount.innerHTML = +photoArray[number].comments;
+  self.getPictures = function(pictures) {
+    photoArray.length = 0;
+    for (var i = 0; i < pictures.length; i++) {
+      photoArray = photoArray.concat(pictures[i]);
+    }
+  };
 
-  index = number;
-};
+  self.setCurrentPicture = function(number) {
+    galleryOverlayImage.src = photoArray[number].url;
+    likesCount.innerHTML = +photoArray[number].likes;
+    commentsCount.innerHTML = +photoArray[number].comments;
 
-var nextPhoto = function(number) {
-  if (!photoArray[number + 1]) {
-    return;
-  }
-  var failedError = 'failed';
-  var mp4Error = 'mp4';
-  if (photoArray[number + 1].url.includes(failedError) || photoArray[number + 1].url.includes(mp4Error)) {
-    nextPhoto(number + 1);
-    return;
-  }
-  setCurrentPicture(number + 1);
-};
+    index = number;
+  };
 
-var showGallery = function(pictureIndex) {
-  galleryContainer.classList.remove('invisible');
-  galleryOverlayImage.addEventListener('click', _onPhotoClick);
-  closeButton.addEventListener('click', _onCloseClick);
-  document.addEventListener('keydown', _onDocumentKeyDown);
-  setCurrentPicture(pictureIndex);
-};
+  self.nextPhoto = function(number) {
+    if (!photoArray[number + 1]) {
+      return;
+    }
+    var failedError = 'failed';
+    var mp4Error = 'mp4';
+    if (photoArray[number + 1].url.includes(failedError) || photoArray[number + 1].url.includes(mp4Error)) {
+      self.nextPhoto(number + 1);
+      return;
+    }
+    self.setCurrentPicture(number + 1);
+  };
 
-var hideGallery = function() {
-  galleryContainer.classList.add('invisible');
-  galleryOverlayImage.removeEventListener('click', _onPhotoClick);
-  closeButton.removeEventListener('click', _onCloseClick);
-  document.removeEventListener('keydown', _onDocumentKeyDown);
-};
+  self.showGallery = function(pictureIndex) {
+    galleryContainer.classList.remove('invisible');
+    galleryOverlayImage.addEventListener('click', self._onPhotoClick);
+    closeButton.addEventListener('click', self._onCloseClick);
+    document.addEventListener('keydown', self._onDocumentKeyDown);
+    self.setCurrentPicture(pictureIndex);
+  };
 
-var _onPhotoClick = function(event) {
-  event.preventDefault();
-  nextPhoto(index);
-};
+  self.hideGallery = function() {
+    galleryContainer.classList.add('invisible');
+    galleryOverlayImage.removeEventListener('click', self._onPhotoClick);
+    closeButton.removeEventListener('click', self._onCloseClick);
+    document.removeEventListener('keydown', self._onDocumentKeyDown);
+  };
 
-var _onDocumentKeyDown = function(event) {
-  event.preventDefault();
-  if (event.keyCode === 27) {
-    hideGallery();
-  }
-};
+  self._onPhotoClick = function(event) {
+    event.preventDefault();
+    self.nextPhoto(index);
+  };
 
-var _onCloseClick = function(event) {
-  event.preventDefault();
-  hideGallery();
-};
+  self._onDocumentKeyDown = function(event) {
+    event.preventDefault();
+    if (event.keyCode === 27) {
+      self.hideGallery();
+    }
+  };
 
-module.exports.getPictures = getPictures;
-module.exports.showGallery = showGallery;
+  self._onCloseClick = function(event) {
+    event.preventDefault();
+    self.hideGallery();
+  };
+
+}
+
+var gallery = new Gallery();
+
+module.exports = gallery;
