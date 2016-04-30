@@ -2,10 +2,12 @@
 
 var filters = document.querySelector('.filters');
 
+var filterInputs = filters.querySelectorAll('input');
+
 var pictures = [];
 var filteredPictures = [];
 var renderedElements = [];
-var activeFilter = 'filter-popular';
+var activeFilter = localStorage.getItem('filter');
 var currentPage = 0;
 var PAGE_SIZE = 12;
 var container = document.querySelector('.pictures');
@@ -69,6 +71,8 @@ filters.addEventListener('click', function(event) {
   var checkedElementID = event.target;
   if (checkedElementID.classList.contains('filters-radio')) {
     setActiveFilter(checkedElementID.id);
+    localStorage.clear();
+    localStorage.setItem('filter', checkedElementID.id);
   }
 });
 
@@ -111,7 +115,21 @@ function getPictures() {
       return stringToDate;
     });
     pictures = loadedPictures;
-    setActiveFilter(activeFilter);
+
+    if (activeFilter === '') {
+      localStorage.setItem('filter', 'filter-popular');
+      setActiveFilter(activeFilter);
+    } else {
+      setActiveFilter(activeFilter);
+    }
+
+    Array.prototype.forEach.call(filterInputs, function(filter) {
+      filter.checked = false;
+      if (filter.id === activeFilter) {
+        filter.checked = true;
+      }
+    });
+
     filters.classList.remove('hidden');
   };
 
