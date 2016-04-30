@@ -7,7 +7,7 @@ var filterInputs = filters.querySelectorAll('input');
 var pictures = [];
 var filteredPictures = [];
 var renderedElements = [];
-var activeFilter = localStorage.getItem('filter');
+var activeFilter = localStorage.getItem('filter') || 'filter-popular';
 var currentPage = 0;
 var PAGE_SIZE = 12;
 var container = document.querySelector('.pictures');
@@ -116,12 +116,7 @@ function getPictures() {
     });
     pictures = loadedPictures;
 
-    if (activeFilter === '') {
-      localStorage.setItem('filter', 'filter-popular');
-      setActiveFilter(activeFilter);
-    } else {
-      setActiveFilter(activeFilter);
-    }
+    setActiveFilter(activeFilter);
 
     Array.prototype.forEach.call(filterInputs, function(filter) {
       filter.checked = false;
