@@ -46,7 +46,8 @@ function Photo(data, pictureIndex) {
 
   this.onPhotoClick = function(evt) {
     evt.preventDefault();
-    Gallery.showGallery(pictureIndex);
+    //Gallery.showGallery(pictureIndex);
+    location.hash = 'photo/' + Gallery.getPictureUrl(pictureIndex);
   };
 
   this.remove = function() {
