@@ -23,16 +23,16 @@ function Gallery() {
   };
 
   self.setCurrentPicture = function(number) {
-    if (typeof (number) === 'string') {
-      galleryOverlayImage.src = location.hash.match(/#photo\/(\S+)/)[1];
-      console.log(photoArray.indexOf(galleryOverlayImage.src));
+    galleryOverlayImage.src = number[1];
+    /*if (typeof (number) === 'string') {
+      galleryOverlayImage.src = number[1];
       //likesCount.innerHTML = +photoArray[number].likes;
       //commentsCount.innerHTML = +photoArray[number].comments;
     } else {
       galleryOverlayImage.src = photoArray[number].url;
       likesCount.innerHTML = +photoArray[number].likes;
       commentsCount.innerHTML = +photoArray[number].comments;
-    }
+    }*/
 
     index = number;
   };
@@ -49,6 +49,7 @@ function Gallery() {
     }
     //self.setCurrentPicture(number + 1);
     location.hash = photoArray[number + 1].url;
+    //location.hash = 'photos/' + (+location.hash.match(/#photos\/(\d)/)[1] + number + 1) + '.jpg';
   };
 
   self.showGallery = function(pictureIndex) {
@@ -89,7 +90,8 @@ function Gallery() {
   };
 
   self.restoreFromHash = function() {
-    self.showGallery(location.hash.match(/#photo\/(\S+)/)[1]);
+    self.showGallery(location.hash.match(/#photo\/(\S+)/));
+    //self.showGallery(+location.hash.match(/#photos\/(\d+)/)[1] - 1);
   };
 
   window.addEventListener('hashchange', self._onHashChange);
