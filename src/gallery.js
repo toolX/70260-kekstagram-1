@@ -22,8 +22,10 @@ function Gallery() {
     return photoArray[number].url;
   };
 
-  self.setCurrentPicture = function(number) {
-    galleryOverlayImage.src = number[1];
+  self.setCurrentPicture = function(hash, number) {
+    galleryOverlayImage.src = hash[1];
+    likesCount.innerHTML = +photoArray[number].likes;
+    commentsCount.innerHTML = +photoArray[number].comments;
     /*if (typeof (number) === 'string') {
       galleryOverlayImage.src = number[1];
       //likesCount.innerHTML = +photoArray[number].likes;
@@ -52,12 +54,12 @@ function Gallery() {
     //location.hash = 'photos/' + (+location.hash.match(/#photos\/(\d)/)[1] + number + 1) + '.jpg';
   };
 
-  self.showGallery = function(pictureIndex) {
+  self.showGallery = function(hash, pictureIndex) {
     galleryContainer.classList.remove('invisible');
     galleryOverlayImage.addEventListener('click', self._onPhotoClick);
     closeButton.addEventListener('click', self._onCloseClick);
     document.addEventListener('keydown', self._onDocumentKeyDown);
-    self.setCurrentPicture(pictureIndex);
+    self.setCurrentPicture(hash, pictureIndex);
   };
 
   self.hideGallery = function() {
@@ -89,8 +91,8 @@ function Gallery() {
     self.restoreFromHash();
   };
 
-  self.restoreFromHash = function() {
-    self.showGallery(location.hash.match(/#photo\/(\S+)/));
+  self.restoreFromHash = function(hash, number) {
+    self.showGallery(hash.match(/#photo\/(\S+)/), number);
     //self.showGallery(+location.hash.match(/#photos\/(\d+)/)[1] - 1);
   };
 
