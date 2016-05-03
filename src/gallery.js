@@ -22,19 +22,21 @@ function Gallery() {
     return photoArray[number].url;
   };
 
-  self.setCurrentPicture = function(hash, number) {
-    galleryOverlayImage.src = hash[1];
+  self.getPictureIndex = function() {
+    var hashMatch = location.hash.match(/#photo\/(\S+)/)[1];
+    var pictureIndex = null;
+    for (var i = 0; i < photoArray.length; i++) {
+      if (photoArray[i].url === hashMatch) {
+        pictureIndex = i;
+      }
+    }
+    return pictureIndex;
+  };
+
+  self.setCurrentPicture = function(number) {
+    galleryOverlayImage.src = photoArray[number].url;
     likesCount.innerHTML = +photoArray[number].likes;
     commentsCount.innerHTML = +photoArray[number].comments;
-    /*if (typeof (number) === 'string') {
-      galleryOverlayImage.src = number[1];
-      //likesCount.innerHTML = +photoArray[number].likes;
-      //commentsCount.innerHTML = +photoArray[number].comments;
-    } else {
-      galleryOverlayImage.src = photoArray[number].url;
-      likesCount.innerHTML = +photoArray[number].likes;
-      commentsCount.innerHTML = +photoArray[number].comments;
-    }*/
 
     index = number;
   };
@@ -49,17 +51,30 @@ function Gallery() {
       self.nextPhoto(number + 1);
       return;
     }
-    //self.setCurrentPicture(number + 1);
-    location.hash = photoArray[number + 1].url;
-    //location.hash = 'photos/' + (+location.hash.match(/#photos\/(\d)/)[1] + number + 1) + '.jpg';
+
+    location.hash = 'photo/' + photoArray[number + 1].url;
   };
 
-  self.showGallery = function(hash, pictureIndex) {
+  self.prevPhoto = function(number) {
+    if (!photoArray[number - 1]) {
+      return;
+    }
+    var failedError = 'failed';
+    var mp4Error = 'mp4';
+    if (photoArray[number - 1].url.includes(failedError) || photoArray[number - 1].url.includes(mp4Error)) {
+      self.prevPhoto(number - 1);
+      return;
+    }
+
+    location.hash = 'photo/' + photoArray[number - 1].url;
+  };
+
+  self.showGallery = function(pictureIndex) {
     galleryContainer.classList.remove('invisible');
     galleryOverlayImage.addEventListener('click', self._onPhotoClick);
     closeButton.addEventListener('click', self._onCloseClick);
     document.addEventListener('keydown', self._onDocumentKeyDown);
-    self.setCurrentPicture(hash, pictureIndex);
+    self.setCurrentPicture(pictureIndex);
   };
 
   self.hideGallery = function() {
@@ -77,6 +92,12 @@ function Gallery() {
 
   self._onDocumentKeyDown = function(event) {
     event.preventDefault();
+    if (event.keyCode === 39) {
+      self.nextPhoto(index);
+    }
+    if (event.keyCode === 37) {
+      self.prevPhoto(index);
+    }
     if (event.keyCode === 27) {
       self.hideGallery();
     }
@@ -91,13 +112,11 @@ function Gallery() {
     self.restoreFromHash();
   };
 
-  self.restoreFromHash = function(hash, number) {
-    self.showGallery(hash.match(/#photo\/(\S+)/), number);
-    //self.showGallery(+location.hash.match(/#photos\/(\d+)/)[1] - 1);
+  self.restoreFromHash = function() {
+    self.showGallery(self.getPictureIndex());
   };
 
   window.addEventListener('hashchange', self._onHashChange);
-
 }
 
 var gallery = new Gallery();
