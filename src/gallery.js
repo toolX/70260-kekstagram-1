@@ -18,6 +18,21 @@ function Gallery() {
     }
   };
 
+  self.getPictureUrl = function(number) {
+    return photoArray[number].url;
+  };
+
+  self.getPictureIndex = function() {
+    var hash = location.hash.match(/#photo\/(\S+)/)[1];
+    var pictureIndex = null;
+    for (var i = 0; i < photoArray.length; i++) {
+      if (photoArray[i].url === hash) {
+        pictureIndex = i;
+      }
+    }
+    return pictureIndex;
+  };
+
   self.setCurrentPicture = function(number) {
     galleryOverlayImage.src = photoArray[number].url;
     likesCount.innerHTML = +photoArray[number].likes;
@@ -36,7 +51,22 @@ function Gallery() {
       self.nextPhoto(number + 1);
       return;
     }
-    self.setCurrentPicture(number + 1);
+
+    location.hash = 'photo/' + photoArray[number + 1].url;
+  };
+
+  self.prevPhoto = function(number) {
+    if (!photoArray[number - 1]) {
+      return;
+    }
+    var failedError = 'failed';
+    var mp4Error = 'mp4';
+    if (photoArray[number - 1].url.includes(failedError) || photoArray[number - 1].url.includes(mp4Error)) {
+      self.prevPhoto(number - 1);
+      return;
+    }
+
+    location.hash = 'photo/' + photoArray[number - 1].url;
   };
 
   self.showGallery = function(pictureIndex) {
@@ -52,6 +82,7 @@ function Gallery() {
     galleryOverlayImage.removeEventListener('click', self._onPhotoClick);
     closeButton.removeEventListener('click', self._onCloseClick);
     document.removeEventListener('keydown', self._onDocumentKeyDown);
+    history.pushState('', document.title, window.location.pathname);
   };
 
   self._onPhotoClick = function(event) {
@@ -61,6 +92,12 @@ function Gallery() {
 
   self._onDocumentKeyDown = function(event) {
     event.preventDefault();
+    if (event.keyCode === 39) {
+      self.nextPhoto(index);
+    }
+    if (event.keyCode === 37) {
+      self.prevPhoto(index);
+    }
     if (event.keyCode === 27) {
       self.hideGallery();
     }
@@ -71,6 +108,23 @@ function Gallery() {
     self.hideGallery();
   };
 
+  self._onHashChange = function() {
+    self.restoreFromHash();
+  };
+
+  self.restoreFromHash = function() {
+    var hash = location.hash.match(/#photo\/(\S+)/);
+    if (hash) {
+      if (hash[0].includes('failed') || hash[0].includes('mp4')) {
+        history.pushState('', document.title, window.location.pathname);
+      } else {
+        self.showGallery(self.getPictureIndex());
+      }
+    }
+    return;
+  };
+
+  window.addEventListener('hashchange', self._onHashChange);
 }
 
 var gallery = new Gallery();
