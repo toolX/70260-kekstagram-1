@@ -113,12 +113,15 @@ function Gallery() {
   };
 
   self.restoreFromHash = function() {
-    var hash = location.hash.match(/#photo\/(\S+)/)[0];
-    if (hash.includes('failed') || hash.includes('mp4')) {
-      history.pushState('', document.title, window.location.pathname);
-    } else {
-      self.showGallery(self.getPictureIndex());
+    var hash = location.hash.match(/#photo\/(\S+)/);
+    if (hash) {
+      if (hash[0].includes('failed') || hash[0].includes('mp4')) {
+        history.pushState('', document.title, window.location.pathname);
+      } else {
+        self.showGallery(self.getPictureIndex());
+      }
     }
+    return;
   };
 
   window.addEventListener('hashchange', self._onHashChange);
