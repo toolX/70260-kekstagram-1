@@ -23,10 +23,10 @@ function Gallery() {
   };
 
   self.getPictureIndex = function() {
-    var hashMatch = location.hash.match(/#photo\/(\S+)/)[1];
+    var hash = location.hash.match(/#photo\/(\S+)/)[1];
     var pictureIndex = null;
     for (var i = 0; i < photoArray.length; i++) {
-      if (photoArray[i].url === hashMatch) {
+      if (photoArray[i].url === hash) {
         pictureIndex = i;
       }
     }
@@ -113,7 +113,12 @@ function Gallery() {
   };
 
   self.restoreFromHash = function() {
-    self.showGallery(self.getPictureIndex());
+    var hash = location.hash.match(/#photo\/(\S+)/)[0];
+    if (hash.includes('failed') || hash.includes('mp4')) {
+      history.pushState('', document.title, window.location.pathname);
+    } else {
+      self.showGallery(self.getPictureIndex());
+    }
   };
 
   window.addEventListener('hashchange', self._onHashChange);
