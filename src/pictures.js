@@ -126,6 +126,7 @@ function getPictures() {
     });
 
     filters.classList.remove('hidden');
+    Gallery._onHashChange();
   };
 
   filters.classList.add('hidden');
