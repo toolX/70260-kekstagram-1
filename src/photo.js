@@ -40,22 +40,26 @@ var getElementFromTemplate = function(data) {
 };
 
 function Photo(data, pictureIndex) {
-  var Gallery = require('./gallery');
 
   this.data = data;
+  this.pictureIndex = pictureIndex;
 
-  this.onPhotoClick = function(evt) {
-    evt.preventDefault();
-    location.hash = 'photo/' + Gallery.getPictureUrl(pictureIndex);
-  };
-
-  this.remove = function() {
-    this.element.removeEventListener('click', this.onPhotoClick);
-    this.element.parentNode.removeChild(this.element);
-  };
+  this.onPhotoClick = this.onPhotoClick.bind(this);
 
   this.element = getElementFromTemplate(this.data);
   this.element.addEventListener('click', this.onPhotoClick);
 }
+
+Photo.prototype.onPhotoClick = function(evt) {
+  evt.preventDefault();
+  var Gallery = require('./gallery');
+
+  location.hash = 'photo/' + Gallery.getPictureUrl(this.pictureIndex);
+};
+
+Photo.prototype.remove = function() {
+  this.element.removeEventListener('click', this.onPhotoClick);
+  this.element.parentNode.removeChild(this.element);
+};
 
 module.exports = Photo;
