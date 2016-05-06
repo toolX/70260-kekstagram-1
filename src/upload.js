@@ -78,7 +78,7 @@ function resizeFormIsValid() {
     if ((parseInt(resizeX.value, 10) + parseInt(size.value, 10)) > currentResizer._image.naturalWidth) {
       submit.disabled = true;
       submit.classList.add('disabled');
-    } if ((parseInt(resizeY.value, 10) + parseInt(size.value, 10)) > currentResizer._image.naturalHeight) {
+    } else if ((parseInt(resizeY.value, 10) + parseInt(size.value, 10)) > currentResizer._image.naturalHeight) {
       submit.disabled = true;
       submit.classList.add('disabled');
     } else {
