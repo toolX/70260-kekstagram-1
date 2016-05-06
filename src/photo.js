@@ -58,8 +58,9 @@ Photo.prototype.onPhotoClick = function(evt) {
 };
 
 Photo.prototype.remove = function() {
-  this.element.removeEventListener('click', this.onPhotoClick);
-  this.element.parentNode.removeChild(this.element);
+  var photoElement = this.element;
+  photoElement.removeEventListener('click', this.onPhotoClick);
+  photoElement.parentNode.removeChild(photoElement);
 };
 
 module.exports = Photo;

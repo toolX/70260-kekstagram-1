@@ -29,20 +29,21 @@ Gallery.prototype.getPictureUrl = function(number) {
 };
 
 Gallery.prototype.getPictureIndex = function() {
-  var hash = location.hash.match(/#photo\/(\S+)/)[1];
   var pictureIndex = null;
-  for (var i = 0; i < this.photoArray.length; i++) {
-    if (this.photoArray[i].url === hash) {
-      pictureIndex = i;
+  this.photoArray.some(function(element, index) {
+    if (element.url === location.hash.match(/#photo\/(\S+)/)[1]) {
+      pictureIndex = index;
+      return true;
     }
-  }
+    return false;
+  });
   return pictureIndex;
 };
 
 Gallery.prototype.setCurrentPicture = function(number) {
   this.galleryOverlayImage.src = this.photoArray[number].url;
-  this.likesCount.innerHTML = +this.photoArray[number].likes;
-  this.commentsCount.innerHTML = +this.photoArray[number].comments;
+  this.likesCount.innerHTML = this.photoArray[number].likes;
+  this.commentsCount.innerHTML = this.photoArray[number].comments;
 
   this.index = number;
 };

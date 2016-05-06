@@ -74,17 +74,11 @@ function resizeFormIsValid() {
   var resizeY = resizeForm.y;
   var size = resizeForm.size;
   var submit = resizeForm.fwd;
-  resizeForm.x.required = true;
-  resizeForm.y.required = true;
-  resizeForm.size.required = true;
-  resizeForm.x.min = 0;
-  resizeForm.y.min = 0;
-  resizeForm.size.min = 20;
   if (resizeX.validity.valid && resizeY.validity.valid && size.validity.valid) {
     if ((parseInt(resizeX.value, 10) + parseInt(size.value, 10)) > currentResizer._image.naturalWidth) {
       submit.disabled = true;
       submit.classList.add('disabled');
-    } if ((parseInt(resizeY.value, 10) + parseInt(size.value, 10)) > currentResizer._image.naturalHeight) {
+    } else if ((parseInt(resizeY.value, 10) + parseInt(size.value, 10)) > currentResizer._image.naturalHeight) {
       submit.disabled = true;
       submit.classList.add('disabled');
     } else {
@@ -95,6 +89,15 @@ function resizeFormIsValid() {
     submit.disabled = true;
     submit.classList.add('disabled');
   }
+}
+
+function formFieldIsValid() {
+  resizeForm.x.required = true;
+  resizeForm.y.required = true;
+  resizeForm.size.required = true;
+  resizeForm.x.min = 0;
+  resizeForm.y.min = 0;
+  resizeForm.size.min = 20;
 }
 
 /**
@@ -112,6 +115,7 @@ var resizeForm = document.forms['upload-resize'];
 resizeForm.addEventListener('input', function(event) {
   var checkedElementID = event.target;
   if (checkedElementID.id.contains('resize')) {
+    formFieldIsValid();
     resizeFormIsValid();
   }
 });
