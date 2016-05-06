@@ -33,8 +33,9 @@ Gallery.prototype.getPictureIndex = function() {
   this.photoArray.some(function(element, index) {
     if (element.url === location.hash.match(/#photo\/(\S+)/)[1]) {
       pictureIndex = index;
+      return true;
     }
-    return pictureIndex;
+    return false;
   });
   return pictureIndex;
 };
